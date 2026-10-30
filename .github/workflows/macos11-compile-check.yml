@@ -51,8 +51,9 @@ jobs:
 
     - name: Package app
       run: |
-        APP=$(find build -name 'AmneziaVPN.app' -maxdepth 6 -type d | head -1)
-        echo "$APP"
+        APP=deploy/build/client/AmneziaVPN.app
+        cp deploy/build/service/server/AmneziaVPN-service "$APP/Contents/MacOS/" || true
+        "$QT_ROOT_DIR/bin/macdeployqt" "$APP" -qmldir=client
         vtool -show-build "$APP/Contents/MacOS/AmneziaVPN" | grep -E 'minos|platform'
         codesign --force --deep -s - "$APP"
         ditto -c -k --keepParent "$APP" AmneziaVPN-macos11-unsigned.zip
