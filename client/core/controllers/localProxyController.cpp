@@ -410,11 +410,12 @@ bool LocalProxyController::startApi(quint16 port)
     });
 
     auto tcpServer = new QTcpServer(httpServer);
-    if (!tcpServer->listen(QHostAddress::LocalHost, port) || !httpServer->bind(tcpServer)) {
+    if (!tcpServer->listen(QHostAddress::LocalHost, port)) {
         qWarning() << "Failed to start HTTP API server on port" << port;
         delete httpServer;
         return false;
     }
+    httpServer->bind(tcpServer);
 
     m_httpServer = httpServer;
     m_apiPort = port;
