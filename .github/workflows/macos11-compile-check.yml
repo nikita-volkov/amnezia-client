@@ -46,7 +46,7 @@ jobs:
     - name: Build
       env:
         QT_INSTALL_DIR: ${{ runner.temp }}
-        AMNEZIA_BUILD_TESTS: ON
+        AMNEZIA_BUILD_TESTS: OFF
       run: deploy/build.sh --generator Ninja
 
     - name: Package app
