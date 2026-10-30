@@ -49,6 +49,15 @@ jobs:
         AMNEZIA_BUILD_TESTS: ON
       run: deploy/build.sh --generator Ninja
 
-    - name: Check deployment target
+    - name: Package app
       run: |
-        find build -name AmneziaVPN -type f -path '*MacOS*' -exec vtool -show-build {} \; | grep -E 'minos|platform'
+        APP=$(find build -name 'AmneziaVPN.app' -maxdepth 6 -type d | head -1)
+        echo "$APP"
+        vtool -show-build "$APP/Contents/MacOS/AmneziaVPN" | grep -E 'minos|platform'
+        codesign --force --deep -s - "$APP"
+        ditto -c -k --keepParent "$APP" AmneziaVPN-macos11-unsigned.zip
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: AmneziaVPN-macos11-unsigned
+        path: AmneziaVPN-macos11-unsigned.zip
