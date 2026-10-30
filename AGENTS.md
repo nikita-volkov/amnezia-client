@@ -70,8 +70,9 @@ cmake --build build --parallel
 ctest --test-dir build/client/tests --output-on-failure
 ```
 
-Qt 6.10 or later and Conan are required; native dependencies are built by Conan
-from `recipes/` on the first configure.
+Qt 6.10 or later and Conan are required for current builds. macOS builds that
+support macOS 11 use Qt 6.7.3. Native dependencies are built by Conan from
+`recipes/` on the first configure.
 
 ## Repository Rules
 

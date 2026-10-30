@@ -86,8 +86,16 @@ TextField {
         root.clear()
     }
 
-    ContextMenu.onRequested: function(position) {
-        contextMenu.request(position)
+    TapHandler {
+        acceptedButtons: Qt.RightButton
+        onTapped: function(eventPoint) {
+            contextMenu.request(eventPoint.position)
+        }
+    }
+
+    TapHandler {
+        acceptedDevices: PointerDevice.TouchScreen
+        onLongPressed: contextMenu.request(point.position)
     }
 
     TapHandler {

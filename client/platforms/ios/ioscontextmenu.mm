@@ -137,18 +137,6 @@ API_AVAILABLE(ios(16.0))
 
 @end
 
-bool IosContextMenu::isAvailable() const
-{
-#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
-    // Since Qt 6.10 the ContextMenu attached type is backed by a native menu
-    // on iOS, so the helper must stay out of the way.
-    return false;
-#else
-    // UIEditMenuInteraction needs iOS 16, which is the deployment target.
-    return true;
-#endif
-}
-
 void IosContextMenu::present(QQuickItem *target, qreal x, qreal y)
 {
     if (!target || !target->window()) {
