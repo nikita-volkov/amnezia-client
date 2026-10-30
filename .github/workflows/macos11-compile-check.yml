@@ -1,0 +1,54 @@
+name: macOS 11 compile check
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [nikita-volkov-restore-macos-11-support]
+
+env:
+  QT_MIRROR: https://mirrors.ocf.berkeley.edu/qt/
+
+jobs:
+  build:
+    runs-on: macos-15
+    env:
+      QT_VERSION: 6.7.3
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'true'
+        fetch-depth: 10
+
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '16.2'
+
+    - uses: jurplel/install-qt-action@v4.3.1
+      with:
+        version: ${{ env.QT_VERSION }}
+        host: 'mac'
+        target: 'desktop'
+        arch: 'clang_64'
+        modules: 'qtremoteobjects qt5compat qtshadertools qthttpserver qtwebsockets'
+        dir: ${{ runner.temp }}
+        setup-python: 'true'
+        set-env: 'true'
+        aqtversion: '==3.3.0'
+        py7zrversion: '==0.22.*'
+        extra: '--base ${{ env.QT_MIRROR }}'
+
+    - uses: actions/setup-python@v6
+      with:
+        python-version: 3.14
+
+    - run: pip install "conan==2.28.0"
+
+    - name: Build
+      env:
+        QT_INSTALL_DIR: ${{ runner.temp }}
+        AMNEZIA_BUILD_TESTS: ON
+      run: deploy/build.sh --generator Ninja
+
+    - name: Check deployment target
+      run: |
+        find build -name AmneziaVPN -type f -path '*MacOS*' -exec vtool -show-build {} \; | grep -E 'minos|platform'
