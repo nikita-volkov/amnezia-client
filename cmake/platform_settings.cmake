@@ -11,9 +11,16 @@ if(APPLE)
         set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "" FORCE)
         set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
     else()
-        set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "" FORCE)
+        # Keep compat with macOS 11 aka Big Sur.
+        # Qt 6.7.x is the last release whose macOS prebuilt libraries still run on Big Sur;
+        # Qt 6.8+ binaries require macOS 12+. The value also feeds into the conan profile
+        # (os.version), so all conan dependencies get rebuilt for the same deployment target.
+        set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "" FORCE)
         set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
     endif()
+
+    # Exposed to Info.plist.in as LSMinimumSystemVersion
+    set(MACOSX_DEPLOYMENT_TARGET "${CMAKE_OSX_DEPLOYMENT_TARGET}")
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
