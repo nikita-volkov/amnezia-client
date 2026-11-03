@@ -121,7 +121,10 @@ private slots:
             QSKIP("Config not starts with vless://");
         }
 
-        QCOMPARE(importResult.config, config);
+        // Comparing a QJsonObject to the raw config URL is meaningless and only
+        // compiles on Qt >= 6.10 (heterogeneous comparison), so assert what the
+        // extraction actually guarantees.
+        QVERIFY2(!importResult.config.isEmpty(), "Config shouldn't be empty");
     }
 
     void testVmessNew()
@@ -152,7 +155,10 @@ private slots:
             QSKIP("Config not starts with vmess:// or not contain @");
         }
 
-        QCOMPARE(importResult.config, config);
+        // Comparing a QJsonObject to the raw config URL is meaningless and only
+        // compiles on Qt >= 6.10 (heterogeneous comparison), so assert what the
+        // extraction actually guarantees.
+        QVERIFY2(!importResult.config.isEmpty(), "Config shouldn't be empty");
     }
 
     void testVmess()
@@ -183,7 +189,10 @@ private slots:
             QSKIP("Config not starts with vmess://");
         }
 
-        QCOMPARE(importResult.config, config);
+        // Comparing a QJsonObject to the raw config URL is meaningless and only
+        // compiles on Qt >= 6.10 (heterogeneous comparison), so assert what the
+        // extraction actually guarantees.
+        QVERIFY2(!importResult.config.isEmpty(), "Config shouldn't be empty");
     }
 
     void testTrojan()
@@ -214,7 +223,10 @@ private slots:
             QSKIP("Config not starts with trojan://");
         }
 
-        QCOMPARE(importResult.config, config);
+        // Comparing a QJsonObject to the raw config URL is meaningless and only
+        // compiles on Qt >= 6.10 (heterogeneous comparison), so assert what the
+        // extraction actually guarantees.
+        QVERIFY2(!importResult.config.isEmpty(), "Config shouldn't be empty");
     }
 
     void testSS()
@@ -245,7 +257,10 @@ private slots:
             QSKIP("Config not starts with ss:// or contain plugin=");
         }
 
-        QCOMPARE(importResult.config, config);
+        // Comparing a QJsonObject to the raw config URL is meaningless and only
+        // compiles on Qt >= 6.10 (heterogeneous comparison), so assert what the
+        // extraction actually guarantees.
+        QVERIFY2(!importResult.config.isEmpty(), "Config shouldn't be empty");
     }
 
     void testSSd()
@@ -282,7 +297,10 @@ private slots:
             QSKIP("Config not starts with ssd://");
         }
 
-        QCOMPARE(importResult.config, config);
+        // Comparing a QJsonObject to the raw config URL is meaningless and only
+        // compiles on Qt >= 6.10 (heterogeneous comparison), so assert what the
+        // extraction actually guarantees.
+        QVERIFY2(!importResult.config.isEmpty(), "Config shouldn't be empty");
     }
 };
 
