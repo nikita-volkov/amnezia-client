@@ -95,11 +95,14 @@ class AwgGo(ConanFile):
                 with env.vars(self).apply():
                     at = Autotools(self)
                     at.make()
+                    binary_name = self._binary_name
                     if self._is_multiarch:
+                        binary_name = f"{self._binary_name}-{arch}"
                         os.rename(
                             os.path.join(self.source_folder, self._binary_name),
-                            os.path.join(self.source_folder, f"{self._binary_name}-{arch}")
+                            os.path.join(self.source_folder, binary_name)
                         )
+                    self._rewrite_macho_min_version(os.path.join(self.source_folder, binary_name))
 
             if is_apple_os(self) and self._is_multiarch:
                 lipo = XCRun(self).find("lipo")
@@ -110,6 +113,23 @@ class AwgGo(ConanFile):
                     shlex.quote(output),
                     shlex.join(binaries)
                 ))
+
+    def _rewrite_macho_min_version(self, binary_path):
+        # Go's internal linker hardcodes minos 12.0 into darwin binaries,
+        # ignoring the profile's deployment target, which makes them unable
+        # to load on older macOS. Rewrite LC_BUILD_VERSION with vtool so the
+        # binary matches the requested os.version (e.g. 11.0 for Big Sur).
+        if str(self.settings.os) != "Macos" or not self.settings.os.version:
+            return
+        min_version = tuple(int(x) for x in str(self.settings.os.version).split("."))
+        if min_version >= (12, 0):
+            return
+        vtool = XCRun(self).find("vtool")
+        tmp_path = binary_path + ".minversion"
+        self.run(f"{shlex.quote(vtool)} -set-build-version macos {self.settings.os.version} "
+                 f"{self.settings.os.version} -replace -output {shlex.quote(tmp_path)} "
+                 f"{shlex.quote(binary_path)}")
+        os.replace(tmp_path, binary_path)
 
     def package(self):
         with chdir(self, self.source_folder):

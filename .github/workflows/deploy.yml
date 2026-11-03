@@ -91,6 +91,9 @@ jobs:
 
     strategy:
       fail-fast: false
+      # The free plan runs only a handful of concurrent macOS jobs; without a
+      # cap the excess matrix jobs get cancelled.
+      max-parallel: 4
       matrix:
         filter:
           - MultipleImportsTest
